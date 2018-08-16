@@ -1,0 +1,156 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>底部导航</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/iconfont.css">
+    <link rel="stylesheet" type="text/css" href="./css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/style.css"/>
+    <style>
+        header{ background-color: #7741fb; }
+        header ul li { height: 2.25rem; line-height: 2.25rem; text-align: center; display: none; color: #fff; position: relative;font-size: 0.9rem;  }
+        header ul li.active{ display: block; }
+        #footer{  background-color: #ffffff00;}
+        #footer ul li{  height: 2.25rem; padding-top: 0.1rem; padding-bottom: 1px; background: url() no-repeat center 2px; font-size: 0.6rem;background-size: auto 1.1rem; text-align: center; }
+        #footer ul li.active{ color: #7741fb; }
+        #footer ul li:nth-child(1){  }
+        #footer ul li:nth-child(2){  }
+        #footer ul li:nth-child(3){  }
+        #footer ul li:nth-child(1).active{  }
+        #footer ul li:nth-child(2).active{  }
+        #footer ul li:nth-child(3).active{  }
+        .flex-con{
+          overflow: auto;
+          background-color:#fff;
+        }
+        .iconfont{
+          font-size: 1.4rem;
+        }
+    </style>
+    <script type="text/javascript">
+      localStorage.setItem('api_url',"http://www.ggmyu11.com");
+    </script>
+</head>
+<body>
+<div id="wrap" class="flex-wrap flex-vertical">
+    <header>
+        <ul>
+            <li class="border-b active" >nice</li>
+            <li class="border-b" >发现</li>
+            <li class="border-b" >
+              <i class="iconfont icon-erweima" style="float:right;padding-right:0.5rem" onclick="openWin('share_win')"></i>
+            </li>
+        </ul>
+    </header>
+    <div id="main" class="flex-con">
+
+    </div>
+    <div id="footer" class="border-t">
+        <ul class="flex-wrap" >
+          <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con active" ><i class="iconfont icon-shouye"></i></li>
+          <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" ><i class="iconfont icon-faxianhover"></i></li>
+          <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" ><i class="iconfont icon-wode"></i></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript">
+var api_url = localStorage.getItem('api_url');
+    apiready = function () {
+        $api.fixStatusBar( $api.dom('header') );
+        api.setStatusBarStyle({
+            style: 'light',
+            color: 'rgba(0,0,0,0)'
+        });
+        funIniGroup();
+        if (localStorage.getItem('user_id')<1) {
+          api.openWin({
+              name: 'from',
+              url: './html/from.html',
+              delay: 300
+          });
+          return;
+        }
+    }
+
+
+    function funIniGroup(){
+        var eHeaderLis = $api.domAll('header li'),
+            frames = [];
+        for (var i = 0,len = eHeaderLis.length; i < len; i++) {
+                frames.push( {
+                    name: 'frame'+i,
+                    url: './html/frame'+i+'.html',
+                    bgColor : '#f5f5f5',
+                    bounces:true
+                } )
+        }
+        api.openFrameGroup({
+            name: 'group',
+            scrollEnabled: false,
+            rect: {
+                x: 0,
+                y: $api.dom('header').offsetHeight-1,
+                w: api.winWidth,
+                h: $api.dom('#main').offsetHeight+1
+            },
+            index: 0,
+            frames: frames
+        }, function (ret, err) {
+
+        });
+    }
+
+    function openWin(name){
+          var delay = 0;
+          if(api.systemType != 'ios'){
+              delay = 300;
+          }
+          api.openWin({
+              name: ''+name+'',
+              url: './html/'+name+'.html',
+              bounces:false,
+              delay: delay,
+              slidBackEnabled:true,
+              bgColor: '#fff'
+          });
+      }
+
+    // 随意切换按钮
+    function randomSwitchBtn( tag ) {
+      if (localStorage.getItem('user_id')<1) {
+        api.alert({
+            title: '请先登录',
+            msg: '知道了',
+        });
+        api.openWin({
+            name: 'from',
+            url: './html/from.html',
+        });
+        return;
+      }
+        if( tag == $api.dom('#footer li.active') )return;
+        var eFootLis = $api.domAll('#footer li'),
+            eHeaderLis = $api.domAll('header li'),
+            index = 0;
+        for (var i = 0,len = eFootLis.length; i < len; i++) {
+            if( tag == eFootLis[i] ){
+                index = i;
+            }else{
+                $api.removeCls(eFootLis[i], 'active');
+                $api.removeCls(eHeaderLis[i], 'active');
+            }
+        }
+        $api.addCls( eFootLis[index], 'active');
+        $api.addCls( eHeaderLis[index], 'active');
+        api.setFrameGroupIndex({
+            name: 'group',
+            index: index
+        });
+    }
+</script>
